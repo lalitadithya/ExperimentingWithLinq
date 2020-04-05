@@ -1,5 +1,6 @@
 ﻿using LinqCustomProvider.Context;
 using LinqCustomProvider.Models;
+using LinqCustomProvider.QueryContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,8 @@ namespace LinqCustomProvider.QueryProvider
 
         public TResult Execute<TResult>(Expression expression)
         {
-            throw new NotImplementedException();
+            var isEnumerable = (typeof(TResult).Name == "IEnumerable`1");
+            return (TResult)FileSystemQueryContext.Execute(expression, isEnumerable, root);
         }
     }
 }

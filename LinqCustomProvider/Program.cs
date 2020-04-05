@@ -1,4 +1,7 @@
-﻿using System;
+﻿using LinqCustomProvider.Context;
+using LinqCustomProvider.Models;
+using System;
+using System.Linq;
 
 namespace LinqCustomProvider
 {
@@ -6,7 +9,16 @@ namespace LinqCustomProvider
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var results = new FileSystemContext(@"C:\")
+                .Where(x => x.ElementType == ElementType.File)
+                .ToList();
+
+            foreach (var result in results)
+            {
+                Console.WriteLine(result.Path);
+            }
+
+            Console.ReadKey();
         }
     }
 }
