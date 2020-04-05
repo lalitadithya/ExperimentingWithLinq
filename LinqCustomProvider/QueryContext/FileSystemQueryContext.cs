@@ -14,8 +14,25 @@ namespace LinqCustomProvider.QueryContext
         {
             var expressionVisitor = new ExpressionTree.ExpressionVisitor();
             expressionVisitor.Visit(expression);
-            string query = "SELECT " + expressionVisitor.Query["SELECT"] + "\n WHERE " + expressionVisitor.Query["WHERE"];
-            Console.WriteLine("Generated query \n- " + query);
+            string query = "SELECT " + expressionVisitor.Query["SELECT"] + "\n" +
+                "FROM " +
+                "WHERE " + expressionVisitor.Query["WHERE"];
+
+            if (expressionVisitor.Tables.Count > 0)
+            {
+                string joinClause = expressionVisitor.BaseTable;
+                foreach(var table in expressionVisitor.Tables)
+                {
+                    joinClause += $" JOIN {table}";
+                }
+                query = query.Replace("FROM ", $"FROM {joinClause} \n");
+            }
+            else
+            {
+                query = query.Replace("FROM ", $"FROM {expressionVisitor.BaseTable} \n");
+            }
+
+            Console.WriteLine("Generated query \n" + query);
             Type t = typeof(TResult);
 
             if (isEnumerable)

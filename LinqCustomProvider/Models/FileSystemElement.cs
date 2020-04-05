@@ -14,6 +14,7 @@ namespace LinqCustomProvider.Models
     {
         public string Path { get; private set; }
         public int Size { get; set; }
+        public List<FileSystemAttributes> Attributes { get; set; }
         public abstract ElementType ElementType { get; }
 
         public FileSystemElement(string path)

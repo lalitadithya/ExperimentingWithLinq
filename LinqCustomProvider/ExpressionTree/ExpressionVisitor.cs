@@ -10,16 +10,14 @@ namespace LinqCustomProvider.ExpressionTree
 {
     public class ExpressionVisitor
     {
-        private readonly Dictionary<string, string> query = new Dictionary<string, string>();
         private readonly StringBuilder clause = new StringBuilder();
+        private Stack<string> currentClause = new Stack<string>();
 
-        public Dictionary<string, string> Query
-        {
-            get
-            {
-                return query;
-            }
-        }
+        public Dictionary<string, string> Query { get; } = new Dictionary<string, string>();
+
+        public string BaseTable { get; set; }
+
+        public List<string> Tables { get; } = new List<string>();
 
         public ExpressionVisitor()
         {
@@ -177,7 +175,13 @@ namespace LinqCustomProvider.ExpressionTree
             {
                 clause.Append("'").Append(c.Value).Append("'");
             }
-
+            else
+            {
+                if (c.Type.GenericTypeArguments.Length > 0)
+                {
+                    BaseTable = c.Type.GenericTypeArguments[0].Name;
+                }
+            }
             return c;
         }
 
@@ -201,6 +205,14 @@ namespace LinqCustomProvider.ExpressionTree
         protected virtual Expression VisitMemberAccess(MemberExpression m)
         {
             clause.Append(m.Member.Name);
+            if(!(m.Type.IsPrimitive || m.Type == typeof(string)))
+            {
+                clause.Append(".");
+                if(m.Type.GenericTypeArguments.Length > 0)
+                {
+                    Tables.Add(m.Type.GenericTypeArguments[0].Name);
+                }
+            }
 
             Expression exp = this.Visit(m.Expression);
             if (exp != m.Expression)
@@ -212,6 +224,8 @@ namespace LinqCustomProvider.ExpressionTree
 
         protected virtual Expression VisitMethodCall(MethodCallExpression m)
         {
+            currentClause.Push(m.Method.Name);
+
             Expression obj = this.Visit(m.Object);
             IEnumerable<Expression> args = this.VisitExpressionList(m.Arguments);
             if (obj != m.Object || args != m.Arguments)
@@ -219,16 +233,19 @@ namespace LinqCustomProvider.ExpressionTree
                 return Expression.Call(obj, m.Method, args);
             }
 
+            currentClause.Pop();
+
             switch (m.Method.Name)
             {
                 case "Select":
-                    query.Add("SELECT", clause.ToString());
+                    Query.Add("SELECT", clause.ToString());
+                    clause.Clear();
                     break;
                 case "Where":
-                    query.Add("WHERE", clause.ToString());
+                    Query.Add("WHERE", clause.ToString());
+                    clause.Clear();
                     break;
             }
-            clause.Clear();
 
             return m;
         }
