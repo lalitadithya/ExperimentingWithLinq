@@ -1,4 +1,5 @@
 ﻿using LinqCustomProvider.Models;
+using LinqCustomProvider.QueryProvider;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,6 +27,12 @@ namespace LinqCustomProvider.Context
         {
             Provider = queryProvider;
             Expression = expression;
+        }
+
+        public FileSystemContext(string root)
+        {
+            Provider = new FileSystemQueryProvider(root);
+            Expression = Expression.Constant(this);
         }
 
         public IEnumerator<FileSystemElement> GetEnumerator()
