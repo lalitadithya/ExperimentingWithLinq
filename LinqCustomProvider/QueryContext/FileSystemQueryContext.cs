@@ -13,6 +13,9 @@ namespace LinqCustomProvider.QueryContext
         internal static object Execute(Expression expression, bool isEnumerable, string root)
         {
             var queriableElements = GetAllFilesAndFolders(root);
+            var expressionVisitor = new ExpressionTree.ExpressionVisitor();
+            expressionVisitor.Visit(expression);
+            Console.WriteLine("Generated query - " + expressionVisitor.Query);
             return null;
         }
 

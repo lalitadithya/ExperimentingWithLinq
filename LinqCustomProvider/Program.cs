@@ -10,7 +10,7 @@ namespace LinqCustomProvider
         static void Main(string[] args)
         {
             var results = new FileSystemContext(@"C:\")
-                .Where(x => x.ElementType == ElementType.File)
+                .Where(x => x.Path == "Hello")
                 .ToList();
 
             foreach (var result in results)
