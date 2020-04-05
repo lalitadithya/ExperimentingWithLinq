@@ -205,12 +205,12 @@ namespace LinqCustomProvider.ExpressionTree
         protected virtual Expression VisitMemberAccess(MemberExpression m)
         {
             clause.Append(m.Member.Name);
-            if(!(m.Type.IsPrimitive || m.Type == typeof(string)))
+            if (!(m.Type.IsPrimitive || m.Type == typeof(string)))
             {
                 clause.Append(".");
-                if(m.Type.GenericTypeArguments.Length > 0)
+                if (m.Type.GenericTypeArguments.Length > 0)
                 {
-                    Tables.Add(m.Type.GenericTypeArguments[0].Name);
+                    Tables.Add(m.Type.GenericTypeArguments[0].Name + " " + m.Member.Name);
                 }
             }
 
