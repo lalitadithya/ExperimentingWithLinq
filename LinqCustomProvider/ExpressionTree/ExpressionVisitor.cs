@@ -10,13 +10,14 @@ namespace LinqCustomProvider.ExpressionTree
 {
     public class ExpressionVisitor
     {
-        private readonly StringBuilder query = new StringBuilder();
+        private readonly Dictionary<string, string> query = new Dictionary<string, string>();
+        private readonly StringBuilder clause = new StringBuilder();
 
-        public string Query
+        public Dictionary<string, string> Query
         {
             get
             {
-                return query.ToString();
+                return query;
             }
         }
 
@@ -134,10 +135,11 @@ namespace LinqCustomProvider.ExpressionTree
 
             if (b.NodeType == ExpressionType.Equal)
             {
-                query.Append("==");
-            } else if(b.NodeType == ExpressionType.AndAlso)
+                clause.Append(" == ");
+            }
+            else if (b.NodeType == ExpressionType.AndAlso)
             {
-                query.Append("AND");
+                clause.Append(" AND ");
             }
 
             Expression right = this.Visit(b.Right);
@@ -167,10 +169,15 @@ namespace LinqCustomProvider.ExpressionTree
 
         protected virtual Expression VisitConstant(ConstantExpression c)
         {
-            if (c.Type != typeof(FileSystemContext))
+            if (c.Type.IsPrimitive)
             {
-                query.Append(c.Value);
+                clause.Append(c.Value);
             }
+            else if (c.Type == typeof(string))
+            {
+                clause.Append("'").Append(c.Value).Append("'");
+            }
+
             return c;
         }
 
@@ -193,7 +200,8 @@ namespace LinqCustomProvider.ExpressionTree
 
         protected virtual Expression VisitMemberAccess(MemberExpression m)
         {
-            query.Append(m.Member.Name);
+            clause.Append(m.Member.Name);
+
             Expression exp = this.Visit(m.Expression);
             if (exp != m.Expression)
             {
@@ -210,6 +218,18 @@ namespace LinqCustomProvider.ExpressionTree
             {
                 return Expression.Call(obj, m.Method, args);
             }
+
+            switch (m.Method.Name)
+            {
+                case "Select":
+                    query.Add("SELECT", clause.ToString());
+                    break;
+                case "Where":
+                    query.Add("WHERE", clause.ToString());
+                    break;
+            }
+            clause.Clear();
+
             return m;
         }
 

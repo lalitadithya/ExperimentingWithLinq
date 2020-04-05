@@ -9,9 +9,10 @@ namespace LinqCustomProvider
     {
         static void Main(string[] args)
         {
-            var results = new FileSystemContext(@"C:\")
-                .Where(x => x.Path == "Hello" && x.Size == 100)
-                .ToList();
+            var results = new FileSystemContext<FileSystemElement>(@"C:\");
+            var r1 = results.Where(x => x.Size == 100);
+            var r2 = r1.Select(x => x.Path);
+            var r3 = r2.ToList();
 
             Console.ReadKey();
         }

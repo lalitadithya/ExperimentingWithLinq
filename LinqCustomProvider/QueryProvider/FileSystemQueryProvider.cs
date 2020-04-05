@@ -9,7 +9,7 @@ using System.Text;
 
 namespace LinqCustomProvider.QueryProvider
 {
-    public class FileSystemQueryProvider : IQueryProvider
+    public class FileSystemQueryProvider<T> : IQueryProvider
     {
         private readonly string root;
 
@@ -20,23 +20,23 @@ namespace LinqCustomProvider.QueryProvider
 
         public IQueryable CreateQuery(Expression expression)
         {
-            return new FileSystemContext(this, expression);
+            return new FileSystemContext<T>(this, expression);
         }
 
         public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
         {
-            return (IQueryable<TElement>)new FileSystemContext(this, expression);
+            return (IQueryable<TElement>)new FileSystemContext<TElement>(this, expression);
         }
 
         public object Execute(Expression expression)
         {
-            return Execute<FileSystemElement>(expression);
+            return Execute<T>(expression);
         }
 
         public TResult Execute<TResult>(Expression expression)
         {
             var isEnumerable = (typeof(TResult).Name == "IEnumerable`1");
-            return (TResult)FileSystemQueryContext.Execute(expression, isEnumerable, root);
+            return (TResult)FileSystemQueryContext.Execute<TResult>(expression, isEnumerable, root);
         }
     }
 }

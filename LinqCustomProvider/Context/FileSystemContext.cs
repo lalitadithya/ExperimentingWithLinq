@@ -9,13 +9,13 @@ using System.Text;
 
 namespace LinqCustomProvider.Context
 {
-    public class FileSystemContext : IOrderedQueryable<FileSystemElement>
+    public class FileSystemContext<T> : IOrderedQueryable<T>
     {
         public Type ElementType
         {
             get
             {
-                return typeof(FileSystemElement);
+                return typeof(T);
             }
         }
 
@@ -31,13 +31,13 @@ namespace LinqCustomProvider.Context
 
         public FileSystemContext(string root)
         {
-            Provider = new FileSystemQueryProvider(root);
+            Provider = new FileSystemQueryProvider<T>(root);
             Expression = Expression.Constant(this);
         }
 
-        public IEnumerator<FileSystemElement> GetEnumerator()
+        public IEnumerator<T> GetEnumerator()
         {
-            return Provider.Execute<IEnumerable<FileSystemElement>>(Expression).GetEnumerator();
+            return Provider.Execute<IEnumerable<T>>(Expression)?.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
