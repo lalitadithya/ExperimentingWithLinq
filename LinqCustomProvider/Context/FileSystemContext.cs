@@ -22,6 +22,12 @@ namespace LinqCustomProvider.Context
 
         public IQueryProvider Provider { get; private set; }
 
+        internal FileSystemContext(IQueryProvider queryProvider, Expression expression)
+        {
+            Provider = queryProvider;
+            Expression = expression;
+        }
+
         public IEnumerator<FileSystemElement> GetEnumerator()
         {
             return Provider.Execute<IEnumerable<FileSystemElement>>(Expression).GetEnumerator();
