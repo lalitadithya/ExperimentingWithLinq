@@ -10,10 +10,10 @@ namespace LinqCustomProvider.Models
         Folder
     }
 
-    public class FileSystemElement
+    public abstract class FileSystemElement
     {
-        public string Path { get; set; }
-        public ElementType ElementType { get; set; }
+        public string Path { get; private set; }
+        public abstract ElementType ElementType { get; }
 
         public FileSystemElement(string path)
         {
