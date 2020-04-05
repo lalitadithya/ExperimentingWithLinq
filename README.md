@@ -13,7 +13,7 @@ var results = new FileSystemContext<FileSystemElement>(@"C:\")
 
 
 ## Output
-```
+```sql
 SELECT Path
 FROM FileSystemElement JOIN FileSystemAttributes Attributes
 WHERE Size == 100 AND Attributes.Key == 'readonly'
