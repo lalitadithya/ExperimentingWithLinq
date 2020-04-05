@@ -135,6 +135,9 @@ namespace LinqCustomProvider.ExpressionTree
             if (b.NodeType == ExpressionType.Equal)
             {
                 query.Append("==");
+            } else if(b.NodeType == ExpressionType.AndAlso)
+            {
+                query.Append("AND");
             }
 
             Expression right = this.Visit(b.Right);

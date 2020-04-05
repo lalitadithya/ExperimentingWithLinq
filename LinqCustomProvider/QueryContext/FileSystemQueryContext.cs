@@ -12,25 +12,10 @@ namespace LinqCustomProvider.QueryContext
     {
         internal static object Execute(Expression expression, bool isEnumerable, string root)
         {
-            var queriableElements = GetAllFilesAndFolders(root);
             var expressionVisitor = new ExpressionTree.ExpressionVisitor();
             expressionVisitor.Visit(expression);
             Console.WriteLine("Generated query - " + expressionVisitor.Query);
-            return null;
-        }
-
-        private static IQueryable<FileSystemElement> GetAllFilesAndFolders(string root)
-        {
-            var list = new List<FileSystemElement>();
-            foreach (var directory in Directory.GetDirectories(root))
-            {
-                list.Add(new FolderElement(directory));
-            }
-            foreach (var file in Directory.GetFiles(root))
-            {
-                list.Add(new FileElement(file));
-            }
-            return list.AsQueryable();
+            return new List<FileSystemElement>();
         }
     }
 }

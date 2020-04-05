@@ -10,13 +10,8 @@ namespace LinqCustomProvider
         static void Main(string[] args)
         {
             var results = new FileSystemContext(@"C:\")
-                .Where(x => x.Path == "Hello")
+                .Where(x => x.Path == "Hello" && x.Size == 100)
                 .ToList();
-
-            foreach (var result in results)
-            {
-                Console.WriteLine(result.Path);
-            }
 
             Console.ReadKey();
         }
