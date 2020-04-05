@@ -9,10 +9,10 @@ namespace LinqCustomProvider
     {
         static void Main(string[] args)
         {
-            var results = new FileSystemContext<FileSystemElement>(@"C:\");
-            var r1 = results.Where(x => x.Size == 100 && x.Attributes.Any(x => x.Key == "readonly"));
-            var r2 = r1.Select(x => x.Path);
-            var r3 = r2.ToList();
+            var results = new FileSystemContext<FileSystemElement>(@"C:\")
+                .Where(x => x.Size == 100 && x.Attributes.Any(x => x.Key == "readonly"))
+                .Select(x => x.Path)
+                .ToList();
 
             Console.ReadKey();
         }
